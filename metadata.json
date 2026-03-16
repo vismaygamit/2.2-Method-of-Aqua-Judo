@@ -1,0 +1,7 @@
+{
+  "name": "2.2 Method",
+  "description": "An environmental laboratory for developing unshakeable balance and physical longevity by applying Judo’s core mechanics to the unpredictable forces of nature.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-parchment: #fcfbf9;
+  --color-stone: #1a1a1a;
+  --color-stone-light: #4a4a4a;
+  --color-aqua-primary: #4fd1c5;
+  --color-aqua-deep: #2c7a7b;
+  
+  --letter-spacing-extreme: 0.4em;
+  --letter-spacing-luxury: 0.2em;
+  --letter-spacing-tight: -0.04em;
+  
+  --animate-fade-in: fadeIn 0.6s ease-out forwards;
+  --animate-reveal: reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-pulse-soft: pulseSoft 3s ease-in-out infinite;
+  --animate-shake: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes reveal {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulseSoft {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.1; }
+  }
+  @keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+  }
+}
+
+/* Base Styles */
+body {
+  @apply bg-parchment text-stone antialiased overflow-x-hidden transition-colors duration-700;
+}
+
+.dark body {
+  @apply bg-[#0a0a0a] text-[#fcfbf9];
+}
+
+.text-reveal {
+  @apply animate-reveal;
+}
+
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #4fd1c5; border-radius: 10px; }
+
+.bg-grid {
+  background-size: 30px 30px;
+  background-image: radial-gradient(circle, #4fd1c5 1px, transparent 1px);
+  opacity: 0.05;
+}
+
+.dark .bg-grid {
+  opacity: 0.02;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Markdown Styles */
+.markdown-body {
+  @apply font-serif text-stone transition-colors duration-700;
+}
+
+.dark .markdown-body {
+  @apply text-[#fcfbf9];
+}
+
+.markdown-body h1 {
+  @apply text-5xl md:text-[120px] font-display font-light uppercase tracking-tighter text-stone mb-12 md:mb-16 mt-20 md:mt-24 leading-[0.85] text-center transition-colors duration-700;
+}
+
+.dark .markdown-body h1 {
+  @apply text-[#fcfbf9];
+}
+
+.markdown-body h2 {
+  @apply text-3xl md:text-6xl font-display font-light uppercase tracking-tighter text-stone mb-8 md:mb-10 mt-16 md:mt-20 leading-[0.9] transition-colors duration-700;
+}
+
+.dark .markdown-body h2 {
+  @apply text-[#fcfbf9];
+}
+
+.markdown-body h3 {
+  @apply text-xl md:text-3xl font-display font-light uppercase tracking-tighter text-stone mb-6 md:mb-8 mt-12 md:mt-16 leading-tight transition-colors duration-700;
+}
+
+.dark .markdown-body h3 {
+  @apply text-[#fcfbf9];
+}
+
+.markdown-body p {
+  @apply mb-8 md:mb-10 leading-[1.8] text-[20px] md:text-[24px] antialiased text-stone/80 transition-colors duration-700;
+}
+
+.dark .markdown-body p {
+  @apply text-[#fcfbf9]/90;
+}
+
+/* Table Styles */
+.markdown-body table {
+  @apply w-full border-collapse mb-16 mt-8 text-sm md:text-base;
+}
+
+.markdown-body th {
+  @apply text-left p-4 border-b-2 border-stone font-display uppercase tracking-widest text-[10px] md:text-xs text-stone/40 transition-colors duration-700;
+}
+
+.dark .markdown-body th {
+  @apply border-[#fcfbf9]/20 text-[#fcfbf9]/60;
+}
+
+.markdown-body td {
+  @apply p-4 border-b border-stone/5 font-sans text-stone/80 transition-colors duration-700;
+}
+
+.dark .markdown-body td {
+  @apply border-[#fcfbf9]/5 text-[#fcfbf9]/90;
+}
+
+.markdown-body tr:hover td {
+  @apply bg-stone/[0.02] text-stone;
+}
+
+.dark .markdown-body tr:hover td {
+  @apply bg-white/[0.02] text-[#fcfbf9];
+}
+
+/* Removed drop cap style to attach first letter to word */
+
+.markdown-body strong {
+  @apply font-black text-stone transition-colors duration-700;
+}
+
+.dark .markdown-body strong {
+  @apply text-[#fcfbf9];
+}
+
+.markdown-body em {
+  @apply font-serif italic text-stone/60 transition-colors duration-700;
+}
+
+.dark .markdown-body em {
+  @apply text-[#fcfbf9]/50;
+}
+
+.markdown-body ul {
+  @apply list-none mb-10 space-y-4;
+}
+
+.markdown-body li {
+  @apply text-stone/80 relative pl-10 mb-6 text-[18px] md:text-[21px] leading-relaxed transition-colors duration-700;
+}
+
+.dark .markdown-body li {
+  @apply text-[#fcfbf9]/70;
+}
+
+.markdown-body li::before {
+  content: "—";
+  @apply absolute left-0 text-aqua-primary font-bold;
+}
+
+.markdown-body hr {
+  @apply border-stone/10 my-12 transition-colors duration-700;
+}
+
+.dark .markdown-body hr {
+  @apply border-[#fcfbf9]/10;
+}
+
+.markdown-body blockquote {
+  @apply border-l-2 border-aqua-primary/30 pl-10 md:pl-16 italic text-stone/40 my-12 md:my-20 text-3xl md:text-5xl leading-tight font-serif tracking-tight transition-colors duration-700;
+}
+
+.dark .markdown-body blockquote {
+  @apply text-[#fcfbf9]/30;
+}
+
+/* Bento Grid Utilities */
+.bento-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-16;
+}
+
+.bento-item {
+  @apply p-10 rounded-[2.5rem] bg-stone/[0.02] dark:bg-white/[0.02] border border-stone/5 dark:border-white/5 transition-all duration-500 hover:bg-white dark:hover:bg-white/[0.05] hover:shadow-2xl hover:shadow-stone/5 dark:hover:shadow-white/5;
+}
+
+.oversized-number {
+  @apply text-[120px] md:text-[240px] font-display font-light text-stone/[0.03] absolute -top-12 -left-8 pointer-events-none leading-none;
+}
