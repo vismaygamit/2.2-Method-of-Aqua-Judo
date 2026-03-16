@@ -407,15 +407,19 @@ const BlogPage: React.FC<BlogPageProps> = ({ post, allPosts, onNavigate, onNextP
       {/* Book Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-6 py-4 md:py-6 flex items-center justify-between border-b border-stone/5 transition-all duration-700 ${isFocusMode ? 'opacity-0 pointer-events-none -translate-y-full' : (isDarkMode ? 'bg-[#0a0a0a]/80 backdrop-blur-xl opacity-100' : 'bg-[#fcfbf9]/80 backdrop-blur-xl opacity-100')}`}>
         <div className="flex items-center gap-4 md:gap-6">
-                <div className="flex items-center gap-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-stone/40 dark:text-white/60">
-            <span>Volume I</span>
-            <ChevronRight size={8} className="md:size-10" />
+          <div className="flex items-center gap-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-stone/40 dark:text-white/60">
+            <a 
+              href="https://aquajudo.com" 
+              className="hover:text-aqua-primary transition-colors flex items-center gap-1"
+            >
+              Return to Residency
+            </a>
+            <ChevronRight size={8} className="opacity-20" />
             <span className="text-stone/60 dark:text-white/80">The Method</span>
           </div>
         </div>
         
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-stone dark:text-white">Aqua Judo</span>
         </div>
 
         <div className="flex items-center gap-4">
@@ -637,7 +641,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ post, allPosts, onNavigate, onNextP
         )}
       </AnimatePresence>
 
-      <main className={`mx-auto grid transition-all duration-700 relative px-4 md:px-6 pt-8 md:pt-12 pb-12 md:pb-16 ${isFocusMode ? 'max-w-[850px] grid-cols-1' : 'max-w-screen-2xl grid-cols-1 lg:grid-cols-[1fr_850px_1fr] gap-4 lg:gap-8'}`}>
+      <main className={`mx-auto grid transition-all duration-700 relative px-4 md:px-6 pt-24 md:pt-32 pb-12 md:pb-16 ${isFocusMode ? 'max-w-[850px] grid-cols-1' : 'max-w-screen-2xl grid-cols-1 lg:grid-cols-[1fr_850px_1fr] gap-4 lg:gap-8'}`}>
         {!isFocusMode && <div className="absolute inset-0 bg-grid pointer-events-none" aria-hidden="true" />}
         {/* Left Margin - Meta Info */}
         {!isFocusMode && (
