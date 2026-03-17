@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Play, Pause, RotateCcw, Settings, Timer, Wind, Trophy, ChevronRight } from 'lucide-react';
 
 export const BreathingTools: React.FC = () => {
-  const [activeTool, setActiveTool] = useState<'circular' | 'box' | 'hold'>('circular');
+  const [activeTool, setActiveTool] = useState<'circular' | 'box' | 'aqua' | 'hold'>('circular');
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -50,6 +50,16 @@ export const BreathingTools: React.FC = () => {
             Box Breathing
           </button>
           <button
+            onClick={() => setActiveTool('aqua')}
+            className={`px-4 md:px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+              activeTool === 'aqua' 
+                ? 'bg-white dark:bg-white/10 text-aqua-primary shadow-sm' 
+                : 'text-stone/40 dark:text-white/40 hover:text-stone dark:hover:text-white'
+            }`}
+          >
+            Aqua Breath
+          </button>
+          <button
             onClick={() => setActiveTool('hold')}
             className={`px-4 md:px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
               activeTool === 'hold' 
@@ -60,6 +70,31 @@ export const BreathingTools: React.FC = () => {
             Breath Hold
           </button>
         </div>
+      </div>
+
+      <div className="mb-10 text-stone-600 dark:text-stone-300 text-sm max-w-2xl leading-relaxed">
+        <AnimatePresence mode="wait">
+          {activeTool === 'circular' && (
+            <motion.p key="circular" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <strong className="text-stone-900 dark:text-white font-bold">Circular Breathing:</strong> A continuous cycle of inhaling and exhaling without pauses. Great for hyper-oxygenation, building energy, and clearing the mind before intense physical exertion.
+            </motion.p>
+          )}
+          {activeTool === 'box' && (
+            <motion.p key="box" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <strong className="text-stone-900 dark:text-white font-bold">Box Breathing:</strong> A balanced 4-part pattern (Inhale, Hold, Exhale, Hold). Used by athletes and tactical professionals to rapidly lower stress, regain focus, and balance the nervous system.
+            </motion.p>
+          )}
+          {activeTool === 'aqua' && (
+            <motion.p key="aqua" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <strong className="text-stone-900 dark:text-white font-bold">Aqua Breath (4-2-6-2):</strong> The signature AquaJudo method. A quick inhale to gather energy, a brief hold for focus, a long exhale to yield and relax under pressure, and a final hold for stillness. Perfect for mastering tension and fluidity.
+            </motion.p>
+          )}
+          {activeTool === 'hold' && (
+            <motion.p key="hold" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <strong className="text-stone-900 dark:text-white font-bold">Breath Hold:</strong> A tool to measure and improve your CO₂ tolerance. Enhances autonomic regulation and physiological resilience. <em className="text-red-500/80">Never practice in water without professional supervision.</em>
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
 
       <AnimatePresence mode="wait">
@@ -81,6 +116,15 @@ export const BreathingTools: React.FC = () => {
           >
             <BoxBreathingLoop />
           </motion.div>
+        ) : activeTool === 'aqua' ? (
+          <motion.div
+            key="aqua"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+          >
+            <AquaBreathLoop />
+          </motion.div>
         ) : (
           <motion.div
             key="hold"
@@ -92,6 +136,25 @@ export const BreathingTools: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 pt-8 border-t border-stone/10 dark:border-white/10">
+        <a 
+          href="https://method.aquajudo.com" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="px-8 py-3 rounded-full bg-stone dark:bg-white text-white dark:text-stone text-xs font-black uppercase tracking-widest hover:bg-aqua-primary dark:hover:bg-aqua-primary transition-all shadow-md"
+        >
+          The Method
+        </a>
+        <a 
+          href="https://aquajudo.com" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="px-8 py-3 rounded-full border border-stone/20 dark:border-white/20 text-stone dark:text-white text-xs font-black uppercase tracking-widest hover:border-aqua-primary hover:text-aqua-primary dark:hover:border-aqua-primary dark:hover:text-aqua-primary transition-all"
+        >
+          Residency
+        </a>
+      </div>
     </div>
   );
 };
@@ -800,6 +863,274 @@ const BreathHoldTimer: React.FC = () => {
       <p className="text-[10px] text-center text-stone/40 dark:text-white/40 leading-relaxed max-w-xs">
         Hold your breath only in a safe, seated, or lying position. Never practice breath holds in water without professional supervision.
       </p>
+    </div>
+  );
+};
+
+const AquaBreathLoop: React.FC = () => {
+  const [isActive, setIsActive] = useState(false);
+  const [phase, setPhase] = useState<'inhale' | 'hold1' | 'exhale' | 'hold2'>('inhale');
+  const [progress, setProgress] = useState(0);
+  const [showSettings, setShowSettings] = useState(false);
+  const [voiceSpeed, setVoiceSpeed] = useState<number>(0.5);
+  const [voiceVolume, setVoiceVolume] = useState<number>(0.4);
+  const [sessionTime, setSessionTime] = useState(0);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  const phaseTimes = {
+    inhale: 4,
+    hold1: 2,
+    exhale: 6,
+    hold2: 2
+  };
+
+  const phases = {
+    inhale: { label: 'In', color: 'text-aqua-primary' },
+    hold1: { label: 'Hold', color: 'text-stone-400 dark:text-stone-500' },
+    exhale: { label: 'Out', color: 'text-aqua-primary' },
+    hold2: { label: 'Hold', color: 'text-stone-400 dark:text-stone-500' }
+  };
+
+  useEffect(() => {
+    if (window.speechSynthesis) {
+      window.speechSynthesis.getVoices();
+    }
+  }, []);
+
+  const speak = useCallback((text: string) => {
+    if (!window.speechSynthesis) return;
+    
+    window.speechSynthesis.cancel();
+    
+    setTimeout(() => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utteranceRef.current = utterance;
+      
+      const voices = window.speechSynthesis.getVoices();
+      
+      // Look for a deep, smooth British male voice
+      const preferredVoice = 
+        voices.find(v => v.name.includes('Natural') && v.lang === 'en-GB' && v.name.toLowerCase().includes('male')) ||
+        voices.find(v => v.name === 'Google UK English Male') ||
+        voices.find(v => v.lang === 'en-GB' && v.name.toLowerCase().includes('male')) ||
+        voices.find(v => v.lang === 'en-GB' && (v.name.includes('Daniel') || v.name.includes('Arthur') || v.name.includes('Oliver'))) ||
+        voices.find(v => v.lang === 'en-GB') ||
+        voices.find(v => v.lang.startsWith('en'));
+
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+      
+      // Meditative settings: slow, gentle, and smooth
+      utterance.rate = voiceSpeed * 0.8; // Slightly slower for meditation
+      utterance.pitch = 0.9; // More natural resonance, less robotic
+      utterance.volume = voiceVolume; // Adjustable volume
+      
+      window.speechSynthesis.speak(utterance);
+    }, 50);
+  }, [voiceSpeed, voiceVolume]);
+
+  useEffect(() => {
+    if (isActive) {
+      speak(phases[phase].label);
+    }
+  }, [phase, isActive, speak]);
+
+  useEffect(() => {
+    if (!isActive) {
+      window.speechSynthesis?.cancel();
+      return;
+    }
+
+    const currentInterval = phaseTimes[phase];
+    const step = 100 / (currentInterval * 10); // 100ms steps
+    
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        const next = prev + step;
+        if (next >= 100) {
+          return 100;
+        }
+        return next;
+      });
+    }, 100);
+    
+    return () => clearInterval(timer);
+  }, [isActive, phase]);
+
+  useEffect(() => {
+    if (progress >= 100) {
+      setProgress(0);
+      setPhase((current) => {
+        if (current === 'inhale') return 'hold1';
+        if (current === 'hold1') return 'exhale';
+        if (current === 'exhale') return 'hold2';
+        return 'inhale';
+      });
+    }
+  }, [progress]);
+
+  const reset = () => {
+    setIsActive(false);
+    setPhase('inhale');
+    setProgress(0);
+    setSessionTime(0);
+    window.speechSynthesis?.cancel();
+  };
+
+  useEffect(() => {
+    let intervalTimer: NodeJS.Timeout;
+    if (isActive) {
+      intervalTimer = setInterval(() => {
+        setSessionTime(prev => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(intervalTimer);
+  }, [isActive]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+  // Calculate scale based on phase and progress
+  let currentScale = 1;
+  if (phase === 'inhale') {
+    currentScale = 1 + (progress / 100) * 0.5;
+  } else if (phase === 'hold1') {
+    currentScale = 1.5;
+  } else if (phase === 'exhale') {
+    currentScale = 1.5 - (progress / 100) * 0.5;
+  } else if (phase === 'hold2') {
+    currentScale = 1;
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-12">
+      <div className="relative flex items-center justify-center w-64 h-64">
+        {/* Outer Ring */}
+        <div className="absolute inset-0 rounded-full border-2 border-stone/5 dark:border-white/5" />
+        
+        {/* Animated Circle */}
+        <motion.div
+          animate={{
+            scale: currentScale,
+            opacity: isActive ? 1 : 0.3
+          }}
+          transition={{ duration: 0.1, ease: "linear" }}
+          className="w-32 h-32 rounded-full bg-aqua-primary/20 border-2 border-aqua-primary"
+        />
+
+        {/* Text Overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={phase}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              className={`text-xs font-black uppercase tracking-[0.4em] ${phases[phase].color}`}
+            >
+              {phases[phase].label}
+            </motion.span>
+          </AnimatePresence>
+          {isActive && (
+            <span className="text-[10px] font-mono opacity-40 mt-2">
+              {Math.ceil(phaseTimes[phase] - (progress / 100) * phaseTimes[phase])}s
+            </span>
+          )}
+        </div>
+
+        {/* Progress Ring Overlay */}
+        <svg className="absolute inset-0 w-full h-full -rotate-90">
+          <circle
+            cx="128"
+            cy="128"
+            r="126"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="text-aqua-primary opacity-20"
+            strokeDasharray={2 * Math.PI * 126}
+            strokeDashoffset={2 * Math.PI * 126 * (1 - progress / 100)}
+          />
+        </svg>
+      </div>
+
+      <div className="flex flex-col items-center gap-6 w-full max-w-xs">
+        <div className="text-[10px] font-mono font-bold tracking-widest text-stone-400 dark:text-stone-500 uppercase">
+          Session Time: {formatTime(sessionTime)}
+        </div>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setIsActive(!isActive)}
+            className="w-16 h-16 rounded-full bg-stone dark:bg-white text-white dark:text-stone flex items-center justify-center hover:bg-aqua-primary dark:hover:bg-aqua-primary transition-all shadow-xl"
+          >
+            {isActive ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
+          </button>
+          <button
+            onClick={reset}
+            className="w-12 h-12 rounded-full border border-stone/10 dark:border-white/10 flex items-center justify-center text-stone/40 dark:text-white/40 hover:text-stone dark:hover:text-white hover:bg-stone/5 dark:hover:bg-white/5 transition-all"
+          >
+            <RotateCcw size={18} />
+          </button>
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all ${
+              showSettings 
+                ? 'border-aqua-primary text-aqua-primary bg-aqua-primary/10' 
+                : 'border-stone/10 dark:border-white/10 text-stone/40 dark:text-white/40 hover:text-stone dark:hover:text-white hover:bg-stone/5 dark:hover:bg-white/5'
+            }`}
+          >
+            <Settings size={18} />
+          </button>
+        </div>
+
+        <AnimatePresence>
+          {showSettings && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="w-full overflow-hidden"
+            >
+              <div className="p-4 bg-stone/5 dark:bg-white/5 rounded-2xl space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-medium text-stone-500 dark:text-stone-400">
+                    <span>Voice Speed</span>
+                    <span>{Math.round(voiceSpeed * 100)}%</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0.1" 
+                    max="1" 
+                    step="0.1" 
+                    value={voiceSpeed} 
+                    onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
+                    className="w-full h-1 bg-stone-200 dark:bg-stone-700 rounded-lg appearance-none cursor-pointer accent-stone-900 dark:accent-stone-100"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-medium text-stone-500 dark:text-stone-400">
+                    <span>Voice Volume</span>
+                    <span>{Math.round(voiceVolume * 100)}%</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="1" 
+                    step="0.1" 
+                    value={voiceVolume} 
+                    onChange={(e) => setVoiceVolume(parseFloat(e.target.value))}
+                    className="w-full h-1 bg-stone-200 dark:bg-stone-700 rounded-lg appearance-none cursor-pointer accent-stone-900 dark:accent-stone-100"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };
