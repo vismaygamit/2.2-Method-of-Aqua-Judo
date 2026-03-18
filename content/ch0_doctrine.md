@@ -1,8 +1,10 @@
 
-The Coastal Performance Method
-A window to longevity.
- 
-Cabo Bello Residency  •  Cabo San Lucas, Mexico
+**Longevity is a skill.**  
+**Train stability under force,**  
+**breath under pressure,**
+**posture under fatigue or the body quits under stress.**
+
+For men who refuse to decline.
 
 ---
 
